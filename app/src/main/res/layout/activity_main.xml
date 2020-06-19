@@ -28,33 +28,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <LinearLayout
+                <com.example.clock.TimeView
                     android:id="@+id/tabTime"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
-                </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvTime"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="center"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </com.example.clock.TimeView>
 
                 <LinearLayout
                     android:id="@+id/tabAlarm"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
-                </LinearLayout>
+                    android:orientation="vertical"></LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/tabTimer"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
-                </LinearLayout>
+                    android:orientation="vertical"></LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/tabStopWatch"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
-                </LinearLayout>
+                    android:orientation="vertical"></LinearLayout>
 
             </FrameLayout>
         </LinearLayout>
