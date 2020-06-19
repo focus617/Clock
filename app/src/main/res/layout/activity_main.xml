@@ -42,11 +42,26 @@
                         android:textAppearance="?android:attr/textAppearanceLarge" />
                 </com.example.clock.TimeView>
 
-                <LinearLayout
+                <com.example.clock.AlarmView
                     android:id="@+id/tabAlarm"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"></LinearLayout>
+                    android:orientation="vertical">
+
+                    <ListView
+                        android:id="@+id/lvAlarmlist"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" >
+                    </ListView>
+
+                    <Button
+                        android:id="@+id/btnAddAlarm"
+                        android:text="@string/add_alarm"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content">
+                    </Button>
+                </com.example.clock.AlarmView>
 
                 <LinearLayout
                     android:id="@+id/tabTimer"
