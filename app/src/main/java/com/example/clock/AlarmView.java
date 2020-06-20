@@ -1,9 +1,12 @@
 package com.example.clock;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -15,8 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TimePicker;
 
-import androidx.annotation.LongDef;
-
 import java.util.Calendar;
 
 public class AlarmView extends LinearLayout {
@@ -25,19 +26,26 @@ public class AlarmView extends LinearLayout {
     private Button btnAddAlarm;
     private ListView lvAlarmList;               // 用来存储我们添加的闹钟
     private ArrayAdapter<AlarmData> adapter;    // ListView适配器
+    private AlarmManager alarmManager;
 
     public AlarmView(Context context) {
         super(context);
+        init();
     }
 
     public AlarmView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        // TODO Auto-generated constructor stub
+        init();
     }
 
     public AlarmView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        // TODO Auto-generated constructor stub
+        init();
+    }
+
+    private void init() {
+        // 使用系统的闹钟服务
+        alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
     }
 
     @Override
@@ -124,6 +132,13 @@ public class AlarmView extends LinearLayout {
                 }
                 AlarmData ad = new AlarmData(calendar.getTimeInMillis());
                 adapter.add(ad);
+
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, ad.getTime(), 5 * 60 * 1000,
+                        PendingIntent.getBroadcast(getContext(),
+                                ad.getId(), // 请求码
+                                new Intent(getContext(), AlarmReceiver.class),
+                                0));
+
                 saveAlarmList();
             }
 
@@ -138,15 +153,16 @@ public class AlarmView extends LinearLayout {
         adapter.remove(ad);
         saveAlarmList();
 
-//        alarmManager.cancel(PendingIntent.getBroadcast(getContext(),
-//                ad.getId(), new Intent(getContext(), AlarmReceiver.class), 0));
+        alarmManager.cancel(PendingIntent.getBroadcast(getContext(),
+                ad.getId(), // 请求码
+                new Intent(getContext(), AlarmReceiver.class), 0));
     }
 
     // 编辑闹钟
     private void editAlarm(final int position) {
         Log.d(TAG, "editAlarm: ");
 
-        final AlarmData ad = adapter.getItem(position);
+        AlarmData ad = adapter.getItem(position);
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(ad.getTime());
 
@@ -167,12 +183,18 @@ public class AlarmView extends LinearLayout {
                     calendar.setTimeInMillis(calendar.getTimeInMillis() + 24
                             * 60 * 60 * 1000);
                 }
-                adapter.remove(ad);
+                deleteAlarm(position);
                 AlarmData newAd = new AlarmData(calendar.getTimeInMillis());
                 adapter.insert(newAd, position);
                 //adapter.notifyDataSetChanged();
 
                 saveAlarmList();
+
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, newAd.getTime(), 5 * 60 * 1000,
+                        PendingIntent.getBroadcast(getContext(),
+                                newAd.getId(), // 请求码
+                                new Intent(getContext(), AlarmReceiver.class),
+                                0));
             }
 
         }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show();
