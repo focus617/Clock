@@ -15,6 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TimePicker;
 
+import androidx.annotation.LongDef;
+
 import java.util.Calendar;
 
 public class AlarmView extends LinearLayout {
@@ -22,7 +24,7 @@ public class AlarmView extends LinearLayout {
 
     private Button btnAddAlarm;
     private ListView lvAlarmList;               // 用来存储我们添加的闹钟
-    private ArrayAdapter<AlarmData> adapter;
+    private ArrayAdapter<AlarmData> adapter;    // ListView适配器
 
     public AlarmView(Context context) {
         super(context);
@@ -41,9 +43,9 @@ public class AlarmView extends LinearLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+
         btnAddAlarm = (Button) findViewById(R.id.btnAddAlarm);
         lvAlarmList = (ListView) findViewById(R.id.lvAlarmlist);
-
         adapter = new ArrayAdapter<AlarmData>(getContext(),
                 android.R.layout.simple_list_item_1);
         lvAlarmList.setAdapter(adapter);
@@ -54,6 +56,7 @@ public class AlarmView extends LinearLayout {
         // 恢复存储的闹钟清单
         readSavedAlarmList();
 
+        // 添加闹钟按钮
         btnAddAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,6 +86,7 @@ public class AlarmView extends LinearLayout {
                                                 break;
 
                                             default:
+                                                editAlarm(position);
                                                 break;
                                         }
                                     }
@@ -93,7 +97,11 @@ public class AlarmView extends LinearLayout {
 
     }
 
+
+    // 添加闹钟
     private void addAlarm() {
+        Log.d(TAG, "addAlarm: ");
+
         //获取当前时间，作为闹钟设定的默认值
         Calendar c = Calendar.getInstance();
 
@@ -108,6 +116,7 @@ public class AlarmView extends LinearLayout {
                 calendar.set(Calendar.SECOND, 0);
                 calendar.set(Calendar.MILLISECOND, 0);
 
+                // 如果设定闹钟时间比当前时间更早，就设定到明天的那个时刻
                 Calendar currentTime = Calendar.getInstance();
                 if (currentTime.getTimeInMillis() >= calendar.getTimeInMillis()) {
                     calendar.setTimeInMillis(calendar.getTimeInMillis() + 24
@@ -121,7 +130,10 @@ public class AlarmView extends LinearLayout {
         }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show();
     }
 
+    // 删除闹钟
     private void deleteAlarm(int position) {
+        Log.d(TAG, "deleteAlarm: ");
+
         AlarmData ad = adapter.getItem(position);
         adapter.remove(ad);
         saveAlarmList();
@@ -130,7 +142,45 @@ public class AlarmView extends LinearLayout {
 //                ad.getId(), new Intent(getContext(), AlarmReceiver.class), 0));
     }
 
+    // 编辑闹钟
+    private void editAlarm(final int position) {
+        Log.d(TAG, "editAlarm: ");
 
+        final AlarmData ad = adapter.getItem(position);
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(ad.getTime());
+
+        // 运用系统的时间选择控件，来设定闹钟时间
+        new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar.set(Calendar.MINUTE, minute);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+
+                // 如果设定闹钟时间比当前时间更早，就设定到明天的那个时刻
+                Calendar currentTime = Calendar.getInstance();
+                if (currentTime.getTimeInMillis() >= calendar.getTimeInMillis()) {
+                    calendar.setTimeInMillis(calendar.getTimeInMillis() + 24
+                            * 60 * 60 * 1000);
+                }
+                adapter.remove(ad);
+                AlarmData newAd = new AlarmData(calendar.getTimeInMillis());
+                adapter.insert(newAd, position);
+                //adapter.notifyDataSetChanged();
+
+                saveAlarmList();
+            }
+
+        }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show();
+
+    }
+
+
+    // 持久化闹钟清单的存取方法
     private static final String KEY_ALARM_LIST = "alarmList";
 
     private void saveAlarmList() {
@@ -159,6 +209,8 @@ public class AlarmView extends LinearLayout {
                 AlarmView.class.getName(), Context.MODE_PRIVATE);
         String content = sp.getString(KEY_ALARM_LIST, null);
 
+        Log.d(TAG, "readSavedAlarmList: " + content);
+
         if (content != null) {
             String[] timeStrings = content.split(",");
             for (String string : timeStrings) {
@@ -167,7 +219,7 @@ public class AlarmView extends LinearLayout {
         }
     }
 
-
+    // 自定义一个数据类型，用来专门存储创建的闹钟时间，并提供给ListView
     private static class AlarmData {
         private long time = 0;
         private Calendar date;
@@ -185,6 +237,10 @@ public class AlarmView extends LinearLayout {
 
         public long getTime() {
             return time;
+        }
+
+        public void setTime(Long time) {
+            this.time = time;
         }
 
         public String getTimeLabel() {
