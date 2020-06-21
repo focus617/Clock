@@ -60,6 +60,41 @@ public class TimerView extends LinearLayout {
             }
         });
 
+        btnPause.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                stopTimer();
+                btnPause.setVisibility(View.GONE);
+                btnResume.setVisibility(View.VISIBLE);
+            }
+        });
+
+        btnResume.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                startTimer();
+                btnPause.setVisibility(View.VISIBLE);
+                btnResume.setVisibility(View.GONE);
+            }
+        });
+        btnReset.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                stopTimer();
+                etHour.setText("00");
+                etMin.setText("00");
+                etSec.setText("00");
+
+                btnReset.setVisibility(View.GONE);
+                btnResume.setVisibility(View.GONE);
+                btnPause.setVisibility(View.GONE);
+                btnStart.setVisibility(View.VISIBLE);
+            }
+        });
+
 
         etHour = (EditText) findViewById(R.id.etHour);
         etMin = (EditText) findViewById(R.id.etMin);
@@ -192,7 +227,7 @@ public class TimerView extends LinearLayout {
 
                     allTimeCount--;
 
-                    // 因为 TimerTask在一个线程里面，需要使用Handler通知Activity
+                    // 每秒通知 Activity - TimerView 减一
                     handle.sendEmptyMessage(MSG_WHAT_TIME_TICK);
                     if (allTimeCount <= 0) {
                         Log.d(TAG, "run: time is up!");
@@ -215,6 +250,7 @@ public class TimerView extends LinearLayout {
         }
     }
 
+    // 因为 TimerTask在一个线程里面，需要使用Handler通知 Activity 来更新计时器UI
     private Handler handle = new Handler(){
 
         public void handleMessage(android.os.Message msg) {
