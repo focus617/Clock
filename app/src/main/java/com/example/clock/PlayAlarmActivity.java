@@ -13,8 +13,8 @@ public class PlayAlarmActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alarm_player_activity);
 
-//        mp = MediaPlayer.create(this, R.raw.music);
-//        mp.start();
+        mp = MediaPlayer.create(this, R.raw.music);
+        mp.start();
     }
 
     @Override
@@ -28,8 +28,8 @@ public class PlayAlarmActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
 
-//        mp.stop();
-//        mp.release();
+        mp.stop();
+        mp.release();
     }
 
 }
