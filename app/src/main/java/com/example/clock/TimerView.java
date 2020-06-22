@@ -228,11 +228,11 @@ public class TimerView extends LinearLayout {
                     allTimeCount--;
 
                     // 每秒通知 Activity - TimerView 减一
-                    handle.sendEmptyMessage(MSG_WHAT_TIME_TICK);
+                    handler.sendEmptyMessage(MSG_WHAT_TIME_TICK);
                     if (allTimeCount <= 0) {
                         Log.d(TAG, "run: time is up!");
 
-                        handle.sendEmptyMessage(MSG_WHAT_TIME_IS_UP);
+                        handler.sendEmptyMessage(MSG_WHAT_TIME_IS_UP);
                         stopTimer();
                     }
                 }
@@ -251,7 +251,7 @@ public class TimerView extends LinearLayout {
     }
 
     // 因为 TimerTask在一个线程里面，需要使用Handler通知 Activity 来更新计时器UI
-    private Handler handle = new Handler(){
+    private Handler handler = new Handler(){
 
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {

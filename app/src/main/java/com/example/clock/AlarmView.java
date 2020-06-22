@@ -133,7 +133,14 @@ public class AlarmView extends LinearLayout {
                 AlarmData ad = new AlarmData(calendar.getTimeInMillis());
                 adapter.add(ad);
 
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, ad.getTime(), 5 * 60 * 1000,
+                // 因为暂时还不支持停止每5秒触发一次的闹铃，暂时屏蔽以下方法，改为只触发一次
+/*                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, ad.getTime(),
+                        5 * 60 * 1000,
+                        PendingIntent.getBroadcast(getContext(),
+                                ad.getId(), // 请求码
+                                new Intent(getContext(), AlarmReceiver.class),
+                                0));*/
+                alarmManager.set(AlarmManager.RTC_WAKEUP, ad.getTime(),
                         PendingIntent.getBroadcast(getContext(),
                                 ad.getId(), // 请求码
                                 new Intent(getContext(), AlarmReceiver.class),
@@ -190,7 +197,14 @@ public class AlarmView extends LinearLayout {
 
                 saveAlarmList();
 
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, newAd.getTime(), 5 * 60 * 1000,
+                // 因为暂时还不支持停止每5秒触发一次的闹铃，暂时屏蔽以下方法，改为只触发一次
+/*                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, newAd.getTime(), 5 * 60 * 1000,
+                        PendingIntent.getBroadcast(getContext(),
+                                newAd.getId(), // 请求码
+                                new Intent(getContext(), AlarmReceiver.class),
+                                0));*/
+
+                alarmManager.set(AlarmManager.RTC_WAKEUP, newAd.getTime(),
                         PendingIntent.getBroadcast(getContext(),
                                 newAd.getId(), // 请求码
                                 new Intent(getContext(), AlarmReceiver.class),
