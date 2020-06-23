@@ -56,7 +56,10 @@ public class TimeView extends LinearLayout {
         tvTime = (TextView) findViewById(R.id.tvTime);
 
 //        tvTime.setText("Hello World!");
-        tvTime.setText(String.format("%d:%d:%d", c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND)));
+        tvTime.setText(String.format("%d:%d:%d",
+                c.get(Calendar.HOUR_OF_DAY),
+                c.get(Calendar.MINUTE),
+                c.get(Calendar.SECOND)));
     }
 
     private Handler timeHandler = new Handler() {
