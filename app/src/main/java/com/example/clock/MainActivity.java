@@ -8,6 +8,7 @@ import android.widget.TabHost;
 public class MainActivity extends AppCompatActivity {
 
     private TabHost tabHost;
+    private StopWatchView stopWatchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +35,12 @@ public class MainActivity extends AppCompatActivity {
         tabHost.addTab(tabHost.newTabSpec("tabStopWatch").setIndicator("秒表")
                 .setContent(R.id.tabStopWatch));
 
+        stopWatchView = (StopWatchView) findViewById(R.id.tabStopWatch);
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopWatchView.onDestroy();
+    }
 }

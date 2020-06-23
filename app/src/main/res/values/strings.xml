@@ -12,4 +12,5 @@
     values-round/strings.xml for round devices.
     -->
     <string name="hello_world">Hello Square World!</string>
+    <string name="lap">计时</string>
 </resources>
